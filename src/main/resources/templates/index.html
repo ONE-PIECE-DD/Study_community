@@ -1,4 +1,5 @@
 <!DOCTYPE HTML>
+<!--此处用到的是thymeleaf的模板所以添加如下xmlns，以至于下面的从session中取值的操作得以进行-->
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>麻酱社区</title>
@@ -26,15 +27,16 @@
                 <button type="submit" class="btn btn-default">搜索</button>
             </form>
             <ul class="nav navbar-nav navbar-right">
-                <li class="dropdown" th:if="${session.user!=null}">
-                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" th:text="${session.user.getName()}"><span class="caret"></span></a>
+                <!--取出先前放在session中的githubUser信息-->
+                <li class="dropdown" th:if="${session.githubUser!=null}">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" th:text="${session.githubUser.getName()}"><span class="caret"></span></a>
                     <ul class="dropdown-menu">
                         <li><a href="#">消息中心</a></li>
                         <li><a href="#">个人资料</a></li>
                         <li><a href="#">退出登录</a></li>
                     </ul>
                 </li>
-                <li th:unless="${session.user!=null}">
+                <li th:unless="${session.githubUser!=null}">
                     <a href="https://github.com/login/oauth/authorize?client_id=0a6fa384d45b2abe4527&redirect_url=http://localhost:8887/callback&scope=user&state=1">登录</a></li>
             </ul>
         </div>

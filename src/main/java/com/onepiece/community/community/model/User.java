@@ -1,5 +1,7 @@
 package com.onepiece.community.community.model;
 
+
+//保存本地的用户信息，此处的信息由githubUser中提取得到
 public class User {
     private Integer id;
     private String name;

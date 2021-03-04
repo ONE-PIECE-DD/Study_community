@@ -1,5 +1,6 @@
 package com.onepiece.community.community.dto;
 
+//用于存储向github官网换取accessToken的信息
 public class AccesstokenDTO {
     private String client_id;
     private String client_secret;

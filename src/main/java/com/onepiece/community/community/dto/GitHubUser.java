@@ -1,5 +1,6 @@
 package com.onepiece.community.community.dto;
 
+//用于存储github处返回的用户部分信息
 public class GitHubUser {
     private String name;
     private Long id;
