@@ -59,17 +59,18 @@ public class PublishController {
         //判断是否登录
         User user=null;
         Cookie[] cookies = request.getCookies();
-        for (Cookie cookie : cookies) {//当访问首页的时候循环访问token，找到token的cookie，然后再到数据库中查是否有记录
-            if (cookie.getName().equals("token")) {
-                String token = cookie.getValue();
-                user = userMapper.findByToken(token);
-                if(user !=null){//如果有，则把user放到session里面，前端去显示
-                    //
-                    request.getSession().setAttribute("user",user);
+        if(cookies!=null&&cookies.length!=0)
+            for (Cookie cookie : cookies) {//当访问首页的时候循环访问token，找到token的cookie，然后再到数据库中查是否有记录
+                if (cookie.getName().equals("token")) {
+                    String token = cookie.getValue();
+                    user = userMapper.findByToken(token);
+                    if(user !=null){//如果有，则把user放到session里面，前端去显示
+                        //
+                        request.getSession().setAttribute("user",user);
+                    }
+                    break;
                 }
-                break;
             }
-        }
         //如果不存在，则返回登录提示信息
         if(user==null){
             model.addAttribute("error","用户未登录");

@@ -42,7 +42,7 @@
                         <li><a href="#">退出登录</a></li>
                     </ul>
                 </li>
-                <li th:unless="${session.user!=null}">
+                <li th:if="${session.user==null}">
                     <a href="https://github.com/login/oauth/authorize?client_id=0a6fa384d45b2abe4527&redirect_url=http://localhost:8887/callback&scope=user&state=1">登录</a></li>
             </ul>
         </div>
@@ -75,7 +75,9 @@
                 <div class="container-fluid main">
                     <div class="row"></div>
                         <div class="alert alert-danger col-lg-9 col-md-12 col-sm-12" th:text="${error}" th:if="${error!=null}"></div>
-                    <button type="submit" class="btn btn-success btn-publish col-lg-3 col-md-12 col-sm-12 col-xs-12">发布</button>
+                    <div class="col-lg-3 col-md-12 col-sm-12 col-xs-12">
+                        <button type="submit" class="btn btn-success btn-publish">发布</button>
+                    </div>
                 </div>
 
                 </form>
