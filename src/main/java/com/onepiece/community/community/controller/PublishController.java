@@ -32,12 +32,31 @@ public class PublishController {
 
     @PostMapping("/publish")
     public String doPublish(
-            @RequestParam("title") String title,
-            @RequestParam("description") String description,
-            @RequestParam("tag") String tag,
+            //接收post请求的同时，接收变量
+            @RequestParam(value="title",required = false) String title,
+            @RequestParam(value="description",required = false) String description,
+            @RequestParam(value="tag",required = false) String tag,
             HttpServletRequest request,
             Model model){//如果想从服务端的接口传递到页面里去，需要利用model传递
 
+        //回显到页面
+        model.addAttribute("title",title);
+        model.addAttribute("description",description);
+        model.addAttribute("tag",tag);
+        //判断是否为空，前端也可以做，但前端可能会绕过，所以前后端都需要做
+        if(title==null||title==""){
+            model.addAttribute("error","标题不能为空");
+            return "publish";
+        }
+        if(description==null||description==""){
+            model.addAttribute("error","问题补充不能为空");
+            return "publish";
+        }
+        if(tag==null||tag==""){
+            model.addAttribute("error","标题不能为空");
+            return "publish";
+        }
+        //判断是否登录
         User user=null;
         Cookie[] cookies = request.getCookies();
         for (Cookie cookie : cookies) {//当访问首页的时候循环访问token，找到token的cookie，然后再到数据库中查是否有记录
@@ -51,12 +70,14 @@ public class PublishController {
                 break;
             }
         }
+        //如果不存在，则返回登录提示信息
         if(user==null){
             model.addAttribute("error","用户未登录");
             return "publish";
         }
 
 
+        //将发布的问题保持在本地数据库
         Question question = new Question();
         question.setTitle(title);
         question.setDescription(description);
