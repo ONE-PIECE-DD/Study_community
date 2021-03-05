@@ -62,9 +62,6 @@ public class AuthorizeController {
             userMapper.insert(user);
             //登录成功，将token写入cookie里面
             response.addCookie(new Cookie("token",token));
-
-            //在requset的session中添加githubUser的相关信息，供html处获取呈现
-            request.getSession().setAttribute("githubUser",githubUser);
             return "redirect:/";//跳转到index页面，如果不写这行，那么地址会变。
             //登录成功
         }else{
