@@ -11,7 +11,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.UUID;
 
 @Controller
@@ -34,7 +36,8 @@ public class AuthorizeController {
     @GetMapping("/callback") //github鉴权网占会向预先设计的”http://localhost:8887/callback“发送code和state参数
     public String callback(@RequestParam(name = "code")String code,
                            @RequestParam(name="state")String state,
-                           HttpServletRequest request){
+                           HttpServletRequest request,
+                           HttpServletResponse response){
         //组装好信息，为获得accesstoken做准备
         AccesstokenDTO accesstokenDTO = new AccesstokenDTO();
         accesstokenDTO.setState(state);
@@ -49,13 +52,17 @@ public class AuthorizeController {
         if(githubUser !=null){
             //利用github得到的信息生成本网站需要的用户信息
             User user = new User();
-            user.setToken(UUID.randomUUID().toString());
+            String token =UUID.randomUUID().toString();
+            user.setToken(token);
             user.setName(githubUser.getName());
             user.setAccountId(String.valueOf(githubUser.getId()));
             user.setGmtCreate(System.currentTimeMillis());
             user.setGmtModified(user.getGmtCreate());
             //将用户信息保存到本地数据库
             userMapper.insert(user);
+            //登录成功，将token写入cookie里面
+            response.addCookie(new Cookie("token",token));
+
             //在requset的session中添加githubUser的相关信息，供html处获取呈现
             request.getSession().setAttribute("githubUser",githubUser);
             return "redirect:/";//跳转到index页面，如果不写这行，那么地址会变。
