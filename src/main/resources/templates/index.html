@@ -6,6 +6,7 @@
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <link rel ="stylesheet" href="css/bootstrap.min.css"/>
     <link rel ="stylesheet" href="css/bootstrap-theme.min.css"/>
+    <link rel ="stylesheet" href="css/community.css"/>
     <script src="js/bootstrap.min.js" type="application/javascript"></script>
 </head>
 <body>
@@ -52,32 +53,22 @@
         <div class="col-lg-9 col-md-12 col-sm-12 col-xs-12">
             <h2><span class="glyphicon glyphicon-list" aria-hidden="true"></span>发现</h2>
 
-            <!--该表单完成以后，当点击submit时候，寻找地址为/publish、请求方法为post的接口-->
-            <form action="/publish" method="post">
-                <div class="form-group">
-                    <label for="title">问题标题：</label>
-                    <input type="text" class="form-control" id="title" name="title" placeholder="问题标题……" th:value="${title}">
+            <div class="media" th:each="question:${questions}">
+                <div class="media-left">
+                    <a href="#">
+                        <img class="media-object img-rounded" th:src="${question.user.avatarUrl}">
+                    </a>
                 </div>
-
-                <div class="form-group">
-                    <label for="description">问题补充：</label>
-                    <textarea name="description" class="form-control" id="description"  cols="30" row="10" th:text="${description}"></textarea>
+                <div class="media-body">
+                    <h4 class="media-heading" th:text="${question.title}"></h4>
+                    <span th:text="${question.description}"></span><br>
+                    <span class="text-desc">
+                        <span th:text="${question.commentCount}"></span>个回复
+                        <span th:text="${question.viewCount}"></span>次浏览
+                        <span th:text="${#dates.format(question.gmtCreate,'dd MMMM yyyy')}"></span>
+                    </span>
                 </div>
-
-                <div class="form-group">
-                    <label for="tag">添加标签：</label>
-                    <input type="text" class="form-control" id="tag" name="tag" placeholder="输入标签，以逗号隔开" th:value="${tag}">
-                </div>
-
-                <div class="container-fluid main">
-                    <div class="row"></div>
-                    <div class="alert alert-danger col-lg-9 col-md-12 col-sm-12" th:text="${error}" th:if="${error!=null}"></div>
-                    <div class="col-lg-3 col-md-12 col-sm-12 col-xs-12">
-                        <button type="submit" class="btn btn-success btn-publish">发布</button>
-                    </div>
-                </div>
-
-            </form>
+            </div>
         </div>
 
 
