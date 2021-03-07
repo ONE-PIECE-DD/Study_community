@@ -1,5 +1,6 @@
 package com.onepiece.community.community.service;
 
+import com.onepiece.community.community.dto.PaginationDTO;
 import com.onepiece.community.community.dto.QuestionDTO;
 import com.onepiece.community.community.mapper.QuesstionMapper;
 import com.onepiece.community.community.mapper.UserMapper;
@@ -21,9 +22,22 @@ public class QuestionService {
     @Autowired
     private UserMapper userMapper;
 
-    public List<QuestionDTO> list() {
-        List<Question> questions = quesstionMapper.list();
-        List<QuestionDTO> questionDTOList=new ArrayList<>();
+
+
+    public PaginationDTO list(Integer page, Integer size) {
+        PaginationDTO paginationDTO = new PaginationDTO();
+        Integer totalCount=quesstionMapper.count();
+        paginationDTO.setPagination(totalCount,page,size);//
+        //判断从前端传入的参数是否合理
+        if(page<1){
+            page=1;
+        }
+        if(page>paginationDTO.getTotalPage()) {
+            page=paginationDTO.getTotalPage();
+        }
+        Integer offset=size*(page-1);
+        List<Question> questions = quesstionMapper.list(offset,size);//取出当前页需要显示的question对象有哪些，存储到表中
+        List<QuestionDTO> questionDTOList=new ArrayList<>();//将数据库当中的questions转换我咱们前端需要的新的questions（含时间，头像，id等用户信息）
         for (Question question : questions) {
             User user=userMapper.findById(question.getCreator());
             QuestionDTO questionDTO = new QuestionDTO();
@@ -31,6 +45,7 @@ public class QuestionService {
             questionDTO.setUser(user);
             questionDTOList.add(questionDTO);
         }
-        return questionDTOList;
+        paginationDTO.setQuestions(questionDTOList);//请求页所需的所有信息加载完成
+        return paginationDTO;//返回一页的信息（ps：一个链表对象存储的是一页的，而非所有页的）
     }
 }

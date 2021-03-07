@@ -1,5 +1,6 @@
 package com.onepiece.community.community.controller;
 
+import com.onepiece.community.community.dto.PaginationDTO;
 import com.onepiece.community.community.dto.QuestionDTO;
 import com.onepiece.community.community.mapper.QuesstionMapper;
 import com.onepiece.community.community.mapper.UserMapper;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Controller;
 
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.thymeleaf.model.IModel;
 
 import javax.servlet.http.Cookie;
@@ -27,7 +29,9 @@ public class IndexController {
 
     @GetMapping("/")//匹配什么都不输入的情况
     public String index(HttpServletRequest request,
-                        Model model){
+                        Model model,
+                        @RequestParam(name="page",defaultValue = "1")Integer page,
+                        @RequestParam(name = "size",defaultValue = "2")Integer size){
     //利用request获取cookie，利用response向浏览器返回cookie
         Cookie[] cookies = request.getCookies();
         if(cookies!=null&&cookies.length!=0)
@@ -42,8 +46,9 @@ public class IndexController {
                     break;
                 }
             }
-        List<QuestionDTO> questionList=quesstionService.list();
-        model.addAttribute("questions",questionList);
+        //page从前端传来
+        PaginationDTO pagination=quesstionService.list(page,size);
+        model.addAttribute("pagination",pagination);
         return "index";
     }
 
