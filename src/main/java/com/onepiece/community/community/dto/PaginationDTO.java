@@ -18,22 +18,10 @@ public class PaginationDTO {
 
     private List<QuestionDTO> questions;//记录每一页中的question对象
 
-    public void setPagination(Integer totalCount, Integer page, Integer size) {//该方法未设置questions
-        //判断总的页数
-        if(totalCount%size==0){
-            totalPage=totalCount/size;
-        }else{
-            totalPage = totalCount/size+1;
-        }
-        //判断传过来的page是否在合理（排除人为输入越界参数）
-        if(page<1){
-            page=1;
-        }
-        if(page>totalPage){
-            page=totalPage;
-        }
-
+    public void setPagination(Integer totalPage, Integer page) {//该方法未设置questions
+        this.totalPage=totalPage;
         this.page=page;
+
         pages.add(page);
         for(int i=1;i<=3;i++){
             if(page-i>0){
