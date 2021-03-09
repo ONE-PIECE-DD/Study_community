@@ -1,5 +1,6 @@
 package com.onepiece.community.community.mapper;
 
+import com.onepiece.community.community.dto.QuestionDTO;
 import com.onepiece.community.community.model.Question;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
@@ -27,4 +28,7 @@ public interface QuesstionMapper {
 
     @Select("select count(1) from question where creator = #{userId}")
     Integer countByUserId(@Param("userId") Integer userId);
+
+    @Select("select * from question where id = #{Id}")
+    Question getById(@Param("Id") Integer Id);
 }

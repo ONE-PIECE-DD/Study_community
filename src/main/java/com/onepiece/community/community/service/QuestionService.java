@@ -96,4 +96,15 @@ public class QuestionService {
         return paginationDTO;//返回一页的信息（ps：一个链表对象存储的是一页的，而非所有页的）
 
     }
+
+
+    public QuestionDTO getById(Integer id) {
+        Question question = quesstionMapper.getById(id);
+        QuestionDTO questionDTO = new QuestionDTO();
+        BeanUtils.copyProperties(question,questionDTO);
+        User user=userMapper.findById(question.getCreator());
+        questionDTO.setUser(user);
+        return questionDTO;
+    }
 }
+
