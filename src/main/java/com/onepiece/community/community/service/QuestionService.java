@@ -4,6 +4,7 @@ import com.onepiece.community.community.dto.PaginationDTO;
 import com.onepiece.community.community.dto.QuestionDTO;
 import com.onepiece.community.community.exception.CustomizeErrorCode;
 import com.onepiece.community.community.exception.CustomizeException;
+import com.onepiece.community.community.mapper.QuestionExtMapper;
 import com.onepiece.community.community.mapper.QuestionMapper;
 import com.onepiece.community.community.mapper.UserMapper;
 import com.onepiece.community.community.model.Question;
@@ -20,6 +21,9 @@ import java.util.List;
 //service:有了这个之后Spring会自动管理，在里面可以同时使用QuestionMapper、UserMapper-起到组装的作用。当一个请求需要组装User-question的时候便需要service（习惯将中间层这么叫）
 @Service
 public class QuestionService {
+
+    @Autowired
+    private QuestionExtMapper questionExtMapper;
 
     @Autowired
     private QuestionMapper questionMapper;
@@ -144,6 +148,13 @@ public class QuestionService {
                 throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
             }
         }
+    }
+
+    public void incView(Integer id) {//访问问题页面时访问该方法
+        Question question = new Question();
+        question.setId(id);//该id已经在上一层校验了
+        question.setViewCount(1);
+        questionExtMapper.incView(question);//调用接口的方法
     }
 }
 
