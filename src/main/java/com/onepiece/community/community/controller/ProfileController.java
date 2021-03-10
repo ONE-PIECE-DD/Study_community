@@ -2,6 +2,7 @@ package com.onepiece.community.community.controller;
 
 import com.onepiece.community.community.dto.PaginationDTO;
 import com.onepiece.community.community.mapper.UserMapper;
+import com.onepiece.community.community.model.Question;
 import com.onepiece.community.community.model.User;
 import com.onepiece.community.community.service.QuestionService;
 import com.sun.org.apache.xpath.internal.operations.Mod;

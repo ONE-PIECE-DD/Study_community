@@ -1,26 +1,44 @@
 package com.onepiece.community.community.controller;
 
 
+import com.onepiece.community.community.dto.QuestionDTO;
 import com.onepiece.community.community.mapper.QuesstionMapper;
 import com.onepiece.community.community.mapper.UserMapper;
 import com.onepiece.community.community.model.Question;
 import com.onepiece.community.community.model.User;
+import com.onepiece.community.community.service.QuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.jws.WebParam;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
 @Controller
 public class PublishController {
 
-    @Autowired
-    private QuesstionMapper quesstionMapper;
 
+    @Autowired
+    private QuestionService questionService;
+
+    @GetMapping("/publish/{id}")
+    public String edit(@PathVariable(name = "id")Integer id,
+                       Model model){
+
+
+        QuestionDTO question=questionService.getById(id);
+        model.addAttribute("title",question.getTitle());
+        model.addAttribute("description",question.getDescription());
+        model.addAttribute("tag",question.getTag());
+        model.addAttribute("id",question.getId());
+
+        return "publish";
+    }
 
 
     @GetMapping("/publish")
@@ -34,6 +52,7 @@ public class PublishController {
             @RequestParam(value="title",required = false) String title,
             @RequestParam(value="description",required = false) String description,
             @RequestParam(value="tag",required = false) String tag,
+            @RequestParam(value="id",required = false)Integer id,
             HttpServletRequest request,
             Model model){//如果想从服务端的接口传递到页面里去，需要利用model传递
 
@@ -71,9 +90,8 @@ public class PublishController {
         question.setDescription(description);
         question.setTag(tag);
         question.setCreator(user.getId());
-        question.setGmtCreate(System.currentTimeMillis());
-        question.setGmtModified(question.getGmtCreate());
-        quesstionMapper.create(question);
+        question.setId(id);
+        questionService.createOrUpdate(question);
         return "redirect:/";
     }
 }

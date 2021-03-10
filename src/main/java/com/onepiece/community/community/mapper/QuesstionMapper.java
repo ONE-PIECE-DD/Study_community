@@ -2,10 +2,7 @@ package com.onepiece.community.community.mapper;
 
 import com.onepiece.community.community.dto.QuestionDTO;
 import com.onepiece.community.community.model.Question;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Param;
-import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.*;
 import org.springframework.stereotype.Component;
 import sun.awt.SunHints;
 
@@ -31,4 +28,7 @@ public interface QuesstionMapper {
 
     @Select("select * from question where id = #{Id}")
     Question getById(@Param("Id") Integer Id);
+
+    @Update("update question set title = #{title},description=#{description},gmt_modified=#{gmtModified},tag=#{tag} where id=#{id}")
+    void update(Question question);
 }

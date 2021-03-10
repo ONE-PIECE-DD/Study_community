@@ -6,6 +6,7 @@ import com.onepiece.community.community.mapper.QuesstionMapper;
 import com.onepiece.community.community.mapper.UserMapper;
 import com.onepiece.community.community.model.Question;
 import com.onepiece.community.community.model.User;
+import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -105,6 +106,19 @@ public class QuestionService {
         User user=userMapper.findById(question.getCreator());
         questionDTO.setUser(user);
         return questionDTO;
+    }
+
+    public void createOrUpdate(Question question) {
+        if(question.getId()==null)
+        {
+            question.setGmtCreate(System.currentTimeMillis());
+            question.setGmtModified(question.getGmtCreate());
+            quesstionMapper.create(question);
+        }else{
+            question.setGmtModified(question.getGmtCreate());
+
+            quesstionMapper.update(question);
+        }
     }
 }
 
