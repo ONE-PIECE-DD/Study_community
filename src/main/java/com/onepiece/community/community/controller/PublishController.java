@@ -2,8 +2,6 @@ package com.onepiece.community.community.controller;
 
 
 import com.onepiece.community.community.dto.QuestionDTO;
-import com.onepiece.community.community.mapper.QuesstionMapper;
-import com.onepiece.community.community.mapper.UserMapper;
 import com.onepiece.community.community.model.Question;
 import com.onepiece.community.community.model.User;
 import com.onepiece.community.community.service.QuestionService;
@@ -15,8 +13,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.jws.WebParam;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
 @Controller

@@ -2,9 +2,7 @@ package com.onepiece.community.community.controller;
 
 
 import com.onepiece.community.community.dto.QuestionDTO;
-import com.onepiece.community.community.mapper.QuesstionMapper;
 import com.onepiece.community.community.service.QuestionService;
-import com.sun.org.apache.xpath.internal.operations.Mod;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

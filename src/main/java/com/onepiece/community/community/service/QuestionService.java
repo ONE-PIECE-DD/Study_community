@@ -2,11 +2,12 @@ package com.onepiece.community.community.service;
 
 import com.onepiece.community.community.dto.PaginationDTO;
 import com.onepiece.community.community.dto.QuestionDTO;
-import com.onepiece.community.community.mapper.QuesstionMapper;
+import com.onepiece.community.community.mapper.QuestionMapper;
 import com.onepiece.community.community.mapper.UserMapper;
 import com.onepiece.community.community.model.Question;
+import com.onepiece.community.community.model.QuestionExample;
 import com.onepiece.community.community.model.User;
-import org.omg.PortableInterceptor.SYSTEM_EXCEPTION;
+import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,7 +20,7 @@ import java.util.List;
 public class QuestionService {
 
     @Autowired
-    private QuesstionMapper quesstionMapper;
+    private QuestionMapper questionMapper;
     @Autowired
     private UserMapper userMapper;
 
@@ -28,7 +29,7 @@ public class QuestionService {
     public PaginationDTO list(Integer page, Integer size) {
         PaginationDTO paginationDTO = new PaginationDTO();
         Integer totalPage;
-        Integer totalCount=quesstionMapper.count();
+        Integer totalCount= (int)questionMapper.countByExample(new QuestionExample());
 
 
         if(totalCount%size==0)
@@ -47,10 +48,10 @@ public class QuestionService {
 
         paginationDTO.setPagination(totalPage,page);
         Integer offset=size*(page-1);
-        List<Question> questions = quesstionMapper.list(offset,size);//取出当前页需要显示的question对象有哪些，存储到表中
+        List<Question> questions = questionMapper.selectByExampleWithRowbounds(new QuestionExample(),new RowBounds(offset,size));//取出当前页需要显示的question对象有哪些，存储到表中
         List<QuestionDTO> questionDTOList=new ArrayList<>();//将数据库当中的questions转换我咱们前端需要的新的questions（含时间，头像，id等用户信息）
         for (Question question : questions) {
-            User user=userMapper.findById(question.getCreator());
+            User user=userMapper.selectByPrimaryKey(question.getCreator());
             QuestionDTO questionDTO = new QuestionDTO();
             BeanUtils.copyProperties(question,questionDTO);//这个工具类的目的：快速的将前一个对象中的数据装载到后一个对象上（通过反射）
             questionDTO.setUser(user);
@@ -64,7 +65,10 @@ public class QuestionService {
     public PaginationDTO list(Integer userId, Integer page, Integer size) {
         PaginationDTO paginationDTO = new PaginationDTO();
         Integer totalPage;
-        Integer totalCount=quesstionMapper.countByUserId(userId);
+        QuestionExample questionExample = new QuestionExample();
+        questionExample.createCriteria().andCreatorEqualTo(userId);
+        Integer totalCount= (int)questionMapper.countByExample(questionExample);
+
 
         if(totalCount%size==0)
         {
@@ -84,10 +88,14 @@ public class QuestionService {
         paginationDTO.setPagination(totalPage,page);
 
         Integer offset=size*(page-1);
-        List<Question> questions = quesstionMapper.listByUserId(userId,offset,size);//取出当前页需要显示的question对象有哪些，存储到表中
+        QuestionExample example = new QuestionExample();
+        example.createCriteria().andCreatorEqualTo(userId);
+
+        List<Question> questions = questionMapper.selectByExampleWithRowbounds(example,new RowBounds(offset,size));//取出当前页需要显示的question对象有哪些，存储到表中
+
         List<QuestionDTO> questionDTOList=new ArrayList<>();//将数据库当中的questions转换我咱们前端需要的新的questions（含时间，头像，id等用户信息）
         for (Question question : questions) {
-            User user=userMapper.findById(question.getCreator());
+            User user=userMapper.selectByPrimaryKey(question.getCreator());
             QuestionDTO questionDTO = new QuestionDTO();
             BeanUtils.copyProperties(question,questionDTO);//这个工具类的目的：快速的将前一个对象中的数据装载到后一个对象上（通过反射）
             questionDTO.setUser(user);
@@ -100,10 +108,10 @@ public class QuestionService {
 
 
     public QuestionDTO getById(Integer id) {
-        Question question = quesstionMapper.getById(id);
+        Question question = questionMapper.selectByPrimaryKey(id);
         QuestionDTO questionDTO = new QuestionDTO();
         BeanUtils.copyProperties(question,questionDTO);
-        User user=userMapper.findById(question.getCreator());
+        User user=userMapper.selectByPrimaryKey(question.getCreator());
         questionDTO.setUser(user);
         return questionDTO;
     }
@@ -113,11 +121,19 @@ public class QuestionService {
         {
             question.setGmtCreate(System.currentTimeMillis());
             question.setGmtModified(question.getGmtCreate());
-            quesstionMapper.create(question);
+            questionMapper.insert(question);
         }else{
             question.setGmtModified(question.getGmtCreate());
 
-            quesstionMapper.update(question);
+            Question updateQuestion = new Question();
+            updateQuestion.setGmtModified(System.currentTimeMillis());
+            updateQuestion.setTag(question.getTag());
+            updateQuestion.setTitle(question.getTitle());
+            updateQuestion.setDescription(question.getDescription());
+
+            QuestionExample example = new QuestionExample();
+            example.createCriteria().andIdEqualTo(question.getId());
+            questionMapper.updateByExampleSelective(updateQuestion, example);
         }
     }
 }

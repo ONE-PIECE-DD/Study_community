@@ -2,10 +2,8 @@ package com.onepiece.community.community.controller;
 
 import com.onepiece.community.community.dto.PaginationDTO;
 import com.onepiece.community.community.mapper.UserMapper;
-import com.onepiece.community.community.model.Question;
 import com.onepiece.community.community.model.User;
 import com.onepiece.community.community.service.QuestionService;
-import com.sun.org.apache.xpath.internal.operations.Mod;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -13,14 +11,13 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
 @Controller
 public class ProfileController {
 
     @Autowired
-    private QuestionService quesstionService;
+    private QuestionService questionService;
     @Autowired
     private UserMapper userMapper;
 
@@ -47,7 +44,7 @@ public class ProfileController {
 
         }
 
-        PaginationDTO paginationDTO = quesstionService.list(user.getId(), page, size);
+        PaginationDTO paginationDTO = questionService.list(user.getId(), page, size);
         model.addAttribute("pagination",paginationDTO);
         return "profile";
     }
