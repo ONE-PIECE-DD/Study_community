@@ -5,6 +5,7 @@ import com.onepiece.community.community.dto.GitHubUser;
 import com.onepiece.community.community.mapper.UserMapper;
 import com.onepiece.community.community.model.User;
 import com.onepiece.community.community.provider.GithubProvider;
+import com.onepiece.community.community.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -23,6 +24,8 @@ public class AuthorizeController {
     private GithubProvider githubProvider;
     @Autowired
     private UserMapper userMapper;
+    @Autowired
+    private UserService userService;
 
     //用该注解，取出application.properties中配置的信息存储到注解下的变量
     @Value("${github.client.id}")
@@ -59,8 +62,8 @@ public class AuthorizeController {
             user.setGmtCreate(System.currentTimeMillis());
             user.setGmtModified(user.getGmtCreate());
             user.setAvatarUrl(githubUser.getAvatarUrl());
-            //将用户信息保存到本地数据库
-            userMapper.insert(user);
+            //将用户信息更新或保存到本地数据库
+            userService.createOrUpdate(user);
             //登录成功，将token写入cookie里面
             response.addCookie(new Cookie("token",token));
             return "redirect:/";//跳转到index页面，如果不写这行，那么地址会变。
@@ -69,5 +72,20 @@ public class AuthorizeController {
             return "redirect:/";
             //登录失败
         }
+
+    }
+    @GetMapping("/logout")
+    public String logout(
+            HttpServletRequest request,
+            HttpServletResponse response
+    ){
+        //退出后移除session当中数据
+        request.getSession().removeAttribute("user");
+        //退出后移除Cookie当中的数据
+        Cookie cookie = new Cookie("token",null);
+        cookie.setMaxAge(0);
+        response.addCookie(cookie);
+        
+        return "redirect:/";
     }
 }
