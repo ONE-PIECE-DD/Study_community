@@ -31,6 +31,7 @@
 
         <!--重要环节：如何将配置与表想连，根据此处配置将数据库模型驱动生成model模型-->
         <table tableName="user" domainObjectName="User" ></table>
+        <table tableName="comment" domainObjectName="Comment" ></table>
         <table tableName="question" domainObjectName="Question" ></table>
 
     </context>
