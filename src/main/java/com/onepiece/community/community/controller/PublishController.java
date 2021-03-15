@@ -19,14 +19,13 @@ import javax.servlet.http.HttpServletRequest;
 public class PublishController {
 
 
+    //处理question表中的数据到类对象的数据的业务
     @Autowired
     private QuestionService questionService;
 
     @GetMapping("/publish/{id}")
-    public String edit(@PathVariable(name = "id")Integer id,
+    public String edit(@PathVariable(name = "id")Long id,
                        Model model){
-
-
         QuestionDTO question=questionService.getById(id);
         model.addAttribute("title",question.getTitle());
         model.addAttribute("description",question.getDescription());
@@ -48,7 +47,7 @@ public class PublishController {
             @RequestParam(value="title",required = false) String title,
             @RequestParam(value="description",required = false) String description,
             @RequestParam(value="tag",required = false) String tag,
-            @RequestParam(value="id",required = false)Integer id,
+            @RequestParam(value="id",required = false)Long id,
             HttpServletRequest request,
             Model model){//如果想从服务端的接口传递到页面里去，需要利用model传递
 
@@ -82,14 +81,15 @@ public class PublishController {
 
         //将发布的问题保持在本地数据库
         Question question = new Question();
+        question.setId(id);
         question.setTitle(title);
         question.setDescription(description);
-        question.setTag(tag);
         question.setCreator(user.getId());
-        question.setId(id);
+        question.setCommentCount(0);
         question.setViewCount(0);
         question.setLikeCount(0);
-        question.setCommentCount(0);
+        question.setTag(tag);
+        //还有gmtModified和gmtCreate
         questionService.createOrUpdate(question);
         return "redirect:/";
     }

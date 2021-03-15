@@ -5,13 +5,13 @@ import lombok.Data;
 
 @Data
 public class QuestionDTO {
-    private Integer id;
+    private Long id;
     private String title;
     private String description;
     private String tag;
     private Long gmtCreate;
     private Long gmtModified;
-    private Integer creator;//该数值关联到user的user_id
+    private Long creator;//该数值关联到user的user_id
     private Integer viewCount;
     private Integer commentCount;
     private Integer likeCount;

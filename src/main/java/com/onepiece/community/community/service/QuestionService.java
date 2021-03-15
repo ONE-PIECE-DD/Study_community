@@ -1,5 +1,6 @@
 package com.onepiece.community.community.service;
 
+import com.fasterxml.jackson.databind.node.LongNode;
 import com.onepiece.community.community.dto.PaginationDTO;
 import com.onepiece.community.community.dto.QuestionDTO;
 import com.onepiece.community.community.exception.CustomizeErrorCode;
@@ -25,6 +26,7 @@ public class QuestionService {
     @Autowired
     private QuestionExtMapper questionExtMapper;
 
+    //与数据库相连接的业务
     @Autowired
     private QuestionMapper questionMapper;
     @Autowired
@@ -68,7 +70,7 @@ public class QuestionService {
     }
 
     //寻找个人的问题
-    public PaginationDTO list(Integer userId, Integer page, Integer size) {
+    public PaginationDTO list(Long userId, Integer page, Integer size) {
         PaginationDTO paginationDTO = new PaginationDTO();
         Integer totalPage;
         QuestionExample questionExample = new QuestionExample();
@@ -113,7 +115,8 @@ public class QuestionService {
     }
 
 
-    public QuestionDTO getById(Integer id) {
+    //根据id寻找在整张表中寻找问题，返回所有符合的问题
+    public QuestionDTO getById(Long id) {
         Question question = questionMapper.selectByPrimaryKey(id);
         if(question==null){
             throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
@@ -125,21 +128,25 @@ public class QuestionService {
         return questionDTO;
     }
 
+
+    //修改问题与创建问题
     public void createOrUpdate(Question question) {
         if(question.getId()==null)
-        {
+        {//发布问题
             question.setGmtCreate(System.currentTimeMillis());
             question.setGmtModified(question.getGmtCreate());
+            question.setViewCount(0);
+            question.setCommentCount(0);
+            question.setLikeCount(0);
             questionMapper.insert(question);
         }else{
             question.setGmtModified(question.getGmtCreate());
-
             Question updateQuestion = new Question();
             updateQuestion.setGmtModified(System.currentTimeMillis());
             updateQuestion.setTag(question.getTag());
             updateQuestion.setTitle(question.getTitle());
             updateQuestion.setDescription(question.getDescription());
-
+            updateQuestion.setId(question.getId());
             QuestionExample example = new QuestionExample();
             example.createCriteria().andIdEqualTo(question.getId());
             questionMapper.updateByExampleSelective(updateQuestion, example);
@@ -150,7 +157,8 @@ public class QuestionService {
         }
     }
 
-    public void incView(Integer id) {//访问问题页面时访问该方法
+    //根据返回的id对指定的问题的访问量进行加一操作
+    public void incView(Long id) {//访问问题页面时访问该方法
         Question question = new Question();
         question.setId(id);//该id已经在上一层校验了
         question.setViewCount(1);
