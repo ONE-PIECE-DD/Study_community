@@ -1,6 +1,6 @@
 package com.onepiece.community.community.controller;
 
-import com.onepiece.community.community.dto.AccesstokenDTO;
+import com.onepiece.community.community.dto.AccessTokenDTO;
 import com.onepiece.community.community.dto.GitHubUser;
 import com.onepiece.community.community.mapper.UserMapper;
 import com.onepiece.community.community.model.User;
@@ -42,7 +42,7 @@ public class AuthorizeController {
                            HttpServletRequest request,
                            HttpServletResponse response){
         //组装好信息，为获得accesstoken做准备
-        AccesstokenDTO accesstokenDTO = new AccesstokenDTO();
+        AccessTokenDTO accesstokenDTO = new AccessTokenDTO();
         accesstokenDTO.setState(state);
         accesstokenDTO.setClient_id(clientId);
         accesstokenDTO.setCode(code);

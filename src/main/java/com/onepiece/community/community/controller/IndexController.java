@@ -14,6 +14,7 @@ public class IndexController {
     @Autowired
     private QuestionService quesstionService;
 
+
     @GetMapping("/")//匹配什么都不输入的情况
     public String index(
                         Model model,

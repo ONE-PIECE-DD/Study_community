@@ -4,7 +4,7 @@ import lombok.Data;
 
 //用于存储向github官网换取accessToken的信息
 @Data
-public class AccesstokenDTO {
+public class AccessTokenDTO {
     private String client_id;
     private String client_secret;
     private String code;

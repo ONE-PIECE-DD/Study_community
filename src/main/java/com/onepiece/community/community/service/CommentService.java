@@ -29,11 +29,11 @@ public class CommentService {
             //回复消息的父问题是否存在
             throw new CustomizeException(CustomizeErrorCode.TARGET_PARAM_NOT_FOUND);
         }
-        if(comment.getType()==null|| CommentTypeEnum.isExist(comment.getType())){
+        if(comment.getType()==null|| !CommentTypeEnum.isExist(comment.getType())){
             //回复的类型是否存在
             throw new CustomizeException(CustomizeErrorCode.TYPE_PARAM_WRONG);
         }
-        if(comment.getType() ==CommentTypeEnum.COMMENT.getType())//判断回复的类型
+        if(comment.getType().equals(CommentTypeEnum.COMMENT.getType()))//判断回复的类型：1表示回复问题、2表示回复评论
         {
             //回复评论
             Comment dbComment = commentMapper.selectByPrimaryKey(comment.getParentId());
@@ -41,7 +41,7 @@ public class CommentService {
                 throw new CustomizeException(CustomizeErrorCode.COMMENT_NOT_FOUND);
             }
             commentMapper.insert(comment);//将评论插入数据库：成功
-        }else{
+        }else if(comment.getType().equals(CommentTypeEnum.QUESTION.getType())){//问：此处==与equals的区别
             //回复问题
             Question question=questionMapper.selectByPrimaryKey(comment.getParentId());
             if(question==null){
@@ -50,6 +50,8 @@ public class CommentService {
             commentMapper.insert(comment);
             question.setCommentCount(1);
             questionExtMapper.incCommentCount(question);
+        }else {
+            throw new CustomizeException(CustomizeErrorCode.COMMENT_TYPE_NOT_EXIST);
         }
     }
 }

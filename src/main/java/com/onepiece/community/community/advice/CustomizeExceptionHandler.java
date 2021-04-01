@@ -42,9 +42,11 @@ public class CustomizeExceptionHandler {
                 PrintWriter writer = response.getWriter();//直接可以在前端写值
                 writer.write(JSON.toJSONString(resultDTO));//用toJSONString方法把object变成json对象
                 writer.close();//将流关闭掉：结束
+
             } catch (IOException ioe) {
             }
-            return null;
+            //return null;//原方式
+            return new ModelAndView("error");
         }else {
             //返回错误页面跳转
             if(e instanceof CustomizeException){//如果抛出了任何Customize Exception的异常，直接返回如下 的error_message

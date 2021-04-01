@@ -30,7 +30,7 @@ public class CommentController {
     //用json来传输的服务器端的API接口，并前端的json数据转换为对象将其传输到数据库当中去，又或是将对象转换成json传到前端
     @ResponseBody//将对象自动序列化为json，发到前端
     @RequestMapping(value = "/comment",method = RequestMethod.POST)
-    public Object post(@RequestBody CommentDTO commentDTO,
+    public Object post(@RequestBody CommentDTO commentDTO,//将post请求当中的body部分反序列化到此处，使其成为对象
                        HttpServletRequest request){//自动的反序列化为对象
 
         User user = (User) request.getSession().getAttribute("user");
@@ -38,6 +38,7 @@ public class CommentController {
             return ResultDTO.errorOf(CustomizeErrorCode.NO_LOGIN);
         }//当用户未登录的是否给些提示
         Comment comment = new Comment();
+        //作为主键的评论标识ID是自增的，所以没有管
         comment.setParentId(commentDTO.getParentId());
         comment.setCommentator(user.getId());
         comment.setContent(commentDTO.getContent());
@@ -45,6 +46,7 @@ public class CommentController {
         comment.setGmtModified(System.currentTimeMillis());
         comment.setGmtCreate(System.currentTimeMillis());
         comment.setLikeCount(0L);
+
         commentService.insert(comment);//插入到数据库
         return ResultDTO.okOf();
 
