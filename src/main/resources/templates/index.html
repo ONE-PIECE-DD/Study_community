@@ -10,6 +10,17 @@
     <script src="js/jquery-3.4.1.min.js"></script>
     <script src="js/bootstrap.min.js" type="application/javascript"></script>
 </head>
+<script type="application/javascript">
+    window.onload = function(){
+        debugger;
+        //在localStorage中存储参数，以便自动关闭窗口
+        var closable = window.localStorage.getItem("closable");
+        if(closable=="true"){
+            window.close();
+            window.localStorage.removeItem("closable");
+        }
+    }
+</script>
 <body>
 <div th:insert="navigation.html::nav"></div>
 

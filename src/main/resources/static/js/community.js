@@ -15,10 +15,17 @@ function post() {
             if(response.code==200){
                 $("#comment_section").hide();//如果返回的状态码是成功，则将评论模块隐藏
             }else {
-                alert(response.message);//浏览器弹窗显示
-            }
-            console.log(response);//浏览器控制台打印
+                if(response.code==2003){
+                    var isAccepted = confirm(response.message)//弹出一个确认框，判断其是否登录
+                    if(isAccepted){
+                        window.open("https://github.com/login/oauth/authorize?client_id=0a6fa384d45b2abe4527&redirect_url=http://localhost:8887/callback&scope=user&state=1");//打开一个新窗口
+                        window.localStorage.setItem("closable", true);
+                    }
+                }else {
 
+                    alert(response.message);//浏览器弹窗显示
+                }
+            }
         },
         dataType:"json"
     });
