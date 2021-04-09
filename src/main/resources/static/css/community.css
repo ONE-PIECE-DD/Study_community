@@ -63,8 +63,21 @@ n{
 .menu .icon:hover{
     color:#499ef3;/*变色*/
 }
+.menu .active{
+    color: #499cf3;
+}
 .comments{
     margin-bottom: 15px;
     border-bottom: 1px solid #eeeeee;
     padding-bottom: 5px;
+}
+.sub-comments{
+    border-radius: 5px;
+    margin-top: 10px;
+    border: 1px solid #eee;
+    padding-top: 15px;
+    margin-top: 15px;
+}
+.sub-comments .btn{
+    margin: 10px 0;
 }
