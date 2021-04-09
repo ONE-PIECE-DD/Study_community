@@ -13,7 +13,7 @@ function post() {
         }),
         success:function (response) {
             if(response.code==200){
-                $("#comment_section").hide();//如果返回的状态码是成功，则将评论模块隐藏
+                window.location.reload();
             }else {
                 if(response.code==2003){
                     var isAccepted = confirm(response.message)//弹出一个确认框，判断其是否登录

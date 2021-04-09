@@ -6,6 +6,7 @@ import com.onepiece.community.community.exception.CustomizeErrorCode;
 import com.onepiece.community.community.model.Comment;
 import com.onepiece.community.community.model.User;
 import com.onepiece.community.community.service.CommentService;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -33,6 +34,10 @@ public class CommentController {
         if(user==null){
             return ResultDTO.errorOf(CustomizeErrorCode.NO_LOGIN);
         }//当用户未登录的是否给些提示
+        //若前端传过来的content为空，则抛出一个异常
+        if(commentCreateDTO==null|| StringUtils.isBlank(commentCreateDTO.getContent())){
+            return ResultDTO.errorOf(CustomizeErrorCode.CONTENT_IS_EMPTY);
+        }
         Comment comment = new Comment();
         //作为主键的评论标识ID是自增的，所以没有管
         comment.setParentId(commentCreateDTO.getParentId());

@@ -8,7 +8,8 @@ public enum CustomizeErrorCode implements ICustomizeErrorCode{
     SYS_ERROR(2004,"服务器猫眼了"),
     TYPE_PARAM_WRONG(2005,"评论类型错误或不存在"),
     COMMENT_NOT_FOUND(2006,"你操作的评论不存在"),
-    COMMENT_TYPE_NOT_EXIST(2007,"该评论类型不能识别")
+    COMMENT_TYPE_NOT_EXIST(2007,"该评论类型不能识别"),
+    CONTENT_IS_EMPTY(2008,"输入内容不能为空"),
     ;
 
     @Override
