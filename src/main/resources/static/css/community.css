@@ -71,6 +71,13 @@ n{
     border-bottom: 1px solid #eeeeee;
     padding-bottom: 5px;
 }
+.menu .comment-icon{
+    font-size: 15px;
+    cursor: pointer;
+}
+.menu .comment-icon :hover{
+    color: #499ef3;
+}
 .sub-comments{
     border-radius: 5px;
     margin-top: 10px;

@@ -5,10 +5,7 @@ import com.onepiece.community.community.dto.CommentDTO;
 import com.onepiece.community.community.enums.CommentTypeEnum;
 import com.onepiece.community.community.exception.CustomizeErrorCode;
 import com.onepiece.community.community.exception.CustomizeException;
-import com.onepiece.community.community.mapper.CommentMapper;
-import com.onepiece.community.community.mapper.QuestionExtMapper;
-import com.onepiece.community.community.mapper.QuestionMapper;
-import com.onepiece.community.community.mapper.UserMapper;
+import com.onepiece.community.community.mapper.*;
 import com.onepiece.community.community.model.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +28,8 @@ public class CommentService {
     private QuestionMapper questionMapper;
     @Autowired
     private UserMapper userMapper;
+    @Autowired
+    private CommentExtMapper commentExtMapper;
 
 
     @Transactional
@@ -52,6 +51,11 @@ public class CommentService {
                 throw new CustomizeException(CustomizeErrorCode.COMMENT_NOT_FOUND);
             }
             commentMapper.insert(comment);//将评论插入数据库：成功
+            //增加评论数
+            Comment parentComment = new Comment();
+            parentComment.setId(comment.getParentId());
+            parentComment.setCommentCount(1);
+            commentExtMapper.incCommentCount(parentComment);
         }else if(comment.getType().equals(CommentTypeEnum.QUESTION.getType())){//问：此处==与equals的区别
             //回复问题
             Question question=questionMapper.selectByPrimaryKey(comment.getParentId());

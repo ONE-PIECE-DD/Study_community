@@ -55,6 +55,7 @@ public class CommentController {
 
     }
 
+    //获取二级评论
     @ResponseBody//将对象自动序列化为json，发到前端
     @RequestMapping(value = "/comment/{id}",method = RequestMethod.GET)
     public ResultDTO<List<CommentDTO>> comments(@PathVariable(name = "id") Long id){
