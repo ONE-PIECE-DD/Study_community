@@ -49,7 +49,7 @@
                             <img class="media-object img-rounded" th:src="${comment.user.avatarUrl}">
                         </a>
                     </div>
-                    <div class="media-body">
+                    <div class="media-body" th:id="${'comment-body-'+comment.id}">
                         <h5 class="media-heading">
                             <span th:text="${comment.user.name}"></span>
                         </h5>
@@ -62,8 +62,8 @@
 
                         </div>
                         <!--二级评论-->
-                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 collapse sub-comments" th:id="${'comment-'+comment.id}">
-
+                        <!--<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 collapse sub-comments"
+                             th:id="${'comment-'+comment.id}">
                             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 comments" th:each="comment:${comments}">
                                 <div class="media-left">
                                     <a href="#">
@@ -76,15 +76,19 @@
                                     </h5>
                                     <div th:text="${comment.content}"></div>
                                     <div class="menu">
-                                        <!--th:data可以方便的在页面获取源数据-->
+                                        &lt;!&ndash;th:data可以方便的在页面获取源数据&ndash;&gt;
                                         <span class="pull-right" th:text="${#dates.format(comment.gmtCreate,'yyyy-MM-dd')}"></span>
 
                                     </div>
                                 </div>
                             </div>
-                            <div><input type="text" class="col-lg-12 col-md-12 col-sm-12 col-xs-12 form-control" placeholder="评论一下"></div>
-                            <button type="button" class="btn btn-success pull-right">评论</button>
-                        </div>
+                            &lt;!&ndash;输入框&ndash;&gt;
+                            <div>
+                                <input type="text" class="col-lg-12 col-md-12 col-sm-12 col-xs-12 form-control" placeholder="评论一下" th:id="${'input-'+comment.id}">
+                                &lt;!&ndash;通过data的属性拿到id，并且通过th:id获取评论&ndash;&gt;
+                                <button type="button" class="btn btn-success pull-right" onclick="comment(this)" th:data-id="${comment.id}">评论</button>
+                            </div>
+                        </div>-->
                     </div>
                 </div>
             </div>

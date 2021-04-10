@@ -1,8 +1,6 @@
 package com.onepiece.community.community.service;
 
 
-import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.onepiece.community.community.dto.CommentCreateDTO;
 import com.onepiece.community.community.dto.CommentDTO;
 import com.onepiece.community.community.enums.CommentTypeEnum;
 import com.onepiece.community.community.exception.CustomizeErrorCode;
@@ -20,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -69,9 +66,9 @@ public class CommentService {
         }
     }
 
-    public List<CommentDTO> listByQuestionId(Long id) {
+    public List<CommentDTO> listByTargetId(Long id, CommentTypeEnum type) {
         CommentExample commentExample = new CommentExample();
-        commentExample.createCriteria().andParentIdEqualTo(id).andTypeEqualTo(CommentTypeEnum.QUESTION.getType());
+        commentExample.createCriteria().andParentIdEqualTo(id).andTypeEqualTo(type.getType());
         commentExample.setOrderByClause("gmt_create desc");
         List<Comment> comments = commentMapper.selectByExample(commentExample);
 
