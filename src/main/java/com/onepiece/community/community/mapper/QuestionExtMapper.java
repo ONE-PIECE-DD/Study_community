@@ -9,5 +9,6 @@ import java.util.List;
 public interface QuestionExtMapper {
     int incView(Question record);//调用该方法的时候，自动映射到QuestionExtMapper.xml,映射关系靠xml文件当中的标签
     int incCommentCount(Question record);//调用该方法的时候，自动映射到QuestionExtMapper.xml,映射关系靠xml文件当中的标签
+    List<Question> selectRelated(Question question);
 
 }

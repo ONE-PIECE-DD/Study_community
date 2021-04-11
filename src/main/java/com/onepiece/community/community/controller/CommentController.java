@@ -49,6 +49,7 @@ public class CommentController {
         comment.setGmtModified(System.currentTimeMillis());
         comment.setGmtCreate(System.currentTimeMillis());
         comment.setLikeCount(0L);
+        comment.setCommentCount(0);
 
         commentService.insert(comment);//插入到数据库
         return ResultDTO.okOf();

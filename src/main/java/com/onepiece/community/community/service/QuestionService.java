@@ -11,13 +11,17 @@ import com.onepiece.community.community.mapper.UserMapper;
 import com.onepiece.community.community.model.Question;
 import com.onepiece.community.community.model.QuestionExample;
 import com.onepiece.community.community.model.User;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.StringJoiner;
+import java.util.stream.Collectors;
 
 //service:有了这个之后Spring会自动管理，在里面可以同时使用QuestionMapper、UserMapper-起到组装的作用。当一个请求需要组装User-question的时候便需要service（习惯将中间层这么叫）
 @Service
@@ -39,7 +43,6 @@ public class QuestionService {
         Integer totalPage;
         Integer totalCount= (int)questionMapper.countByExample(new QuestionExample());
 
-
         if(totalCount%size==0)
         {
             totalPage = totalCount/size;
@@ -56,7 +59,9 @@ public class QuestionService {
 
         paginationDTO.setPagination(totalPage,page);
         Integer offset=size*(page-1);
-        List<Question> questions = questionMapper.selectByExampleWithRowbounds(new QuestionExample(),new RowBounds(offset,size));//取出当前页需要显示的question对象有哪些，存储到表中
+        QuestionExample questionExample = new QuestionExample();
+        questionExample.setOrderByClause("gmt_create desc");
+        List<Question> questions = questionMapper.selectByExampleWithRowbounds(questionExample,new RowBounds(offset,size));//取出当前页需要显示的question对象有哪些，存储到表中
         List<QuestionDTO> questionDTOList=new ArrayList<>();//将数据库当中的questions转换我咱们前端需要的新的questions（含时间，头像，id等用户信息）
         for (Question question : questions) {
             User user=userMapper.selectByPrimaryKey(question.getCreator());
@@ -163,6 +168,29 @@ public class QuestionService {
         question.setId(id);//该id已经在上一层校验了
         question.setViewCount(1);
         questionExtMapper.incView(question);//调用接口的方法
+    }
+
+    public List<QuestionDTO> selectRelated(QuestionDTO queryDTO) {
+        if(StringUtils.isBlank(queryDTO.getTag())){
+            return new ArrayList<>();
+        }
+        //TODO:理解含义
+        String[] tags = StringUtils.split(queryDTO.getTag(), ",");
+        String regexpTag = Arrays.stream(tags).collect(Collectors.joining("|"));
+        Question question = new Question();
+        question.setId(queryDTO.getId());
+        question.setTag(regexpTag);
+
+        List<Question> questions = questionExtMapper.selectRelated(question);
+
+        List<QuestionDTO> questionDTOS = questions.stream().map(q -> {
+            QuestionDTO questionDTO = new QuestionDTO();
+            BeanUtils.copyProperties(q, questionDTO);
+            return questionDTO;
+        }).collect(Collectors.toList());
+
+
+        return questionDTOS;
     }
 }
 

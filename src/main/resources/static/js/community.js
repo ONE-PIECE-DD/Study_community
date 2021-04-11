@@ -16,6 +16,7 @@ function comment2target(targetId,type,content) {
         alert("不能回复空内容");
         return;
     }
+    /*向/comment对应mapper下的方法传送json数据*/
     $.ajax({
         type:"POST",
         url:"/comment",//更目录下
@@ -36,7 +37,6 @@ function comment2target(targetId,type,content) {
                         window.localStorage.setItem("closable", true);
                     }
                 }else {
-
                     alert(response.message);//浏览器弹窗显示
                 }
             }

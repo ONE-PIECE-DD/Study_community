@@ -36,20 +36,23 @@ public class CommentService {
     public void insert(Comment comment) {
         //判断消息是否存在
         if(comment.getParentId()==null||comment.getParentId()== 0){
-            //回复消息的父问题是否存在
+            //回复消息的父问题不存在，则抛出异常信息：目标未找到
             throw new CustomizeException(CustomizeErrorCode.TARGET_PARAM_NOT_FOUND);
         }
         if(comment.getType()==null|| !CommentTypeEnum.isExist(comment.getType())){
-            //回复的类型是否存在
+            //回复的类型不存在，则抛出异常信息：类型错误
             throw new CustomizeException(CustomizeErrorCode.TYPE_PARAM_WRONG);
         }
+
         if(comment.getType().equals(CommentTypeEnum.COMMENT.getType()))//判断回复的类型：1表示回复问题、2表示回复评论
         {
             //回复评论
             Comment dbComment = commentMapper.selectByPrimaryKey(comment.getParentId());
             if(dbComment==null){
+                //未找到评论，这种情况便是回复的ID虽然被赋予了值，但ID对应的原评论被删除了
                 throw new CustomizeException(CustomizeErrorCode.COMMENT_NOT_FOUND);
             }
+
             commentMapper.insert(comment);//将评论插入数据库：成功
             //增加评论数
             Comment parentComment = new Comment();
@@ -62,6 +65,7 @@ public class CommentService {
             if(question==null){
                 throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
             }
+            //此处插入评论的时候comment的commentCount属性未被赋值，以至于后面二级评论无法统计
             commentMapper.insert(comment);
             question.setCommentCount(1);
             questionExtMapper.incCommentCount(question);
