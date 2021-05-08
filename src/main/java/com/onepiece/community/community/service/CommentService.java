@@ -3,6 +3,8 @@ package com.onepiece.community.community.service;
 
 import com.onepiece.community.community.dto.CommentDTO;
 import com.onepiece.community.community.enums.CommentTypeEnum;
+import com.onepiece.community.community.enums.NotificationEnum;
+import com.onepiece.community.community.enums.NotificationStatusEnum;
 import com.onepiece.community.community.exception.CustomizeErrorCode;
 import com.onepiece.community.community.exception.CustomizeException;
 import com.onepiece.community.community.mapper.*;
@@ -30,10 +32,12 @@ public class CommentService {
     private UserMapper userMapper;
     @Autowired
     private CommentExtMapper commentExtMapper;
+    @Autowired
+    private NotificationMapper notificationMapper;
 
 
     @Transactional
-    public void insert(Comment comment) {
+    public void insert(Comment comment, User commentTator) {
         //判断消息是否存在
         if(comment.getParentId()==null||comment.getParentId()== 0){
             //回复消息的父问题不存在，则抛出异常信息：目标未找到
@@ -48,17 +52,24 @@ public class CommentService {
         {
             //回复评论
             Comment dbComment = commentMapper.selectByPrimaryKey(comment.getParentId());
+
             if(dbComment==null){
                 //未找到评论，这种情况便是回复的ID虽然被赋予了值，但ID对应的原评论被删除了
                 throw new CustomizeException(CustomizeErrorCode.COMMENT_NOT_FOUND);
             }
-
+            //回复问题
+            Question question=questionMapper.selectByPrimaryKey(dbComment.getParentId());
+            if(question==null){
+                throw new CustomizeException(CustomizeErrorCode.QUESTION_NOT_FOUND);
+            }
             commentMapper.insert(comment);//将评论插入数据库：成功
             //增加评论数
             Comment parentComment = new Comment();
             parentComment.setId(comment.getParentId());
             parentComment.setCommentCount(1);
             commentExtMapper.incCommentCount(parentComment);
+            //增加通知
+            createNotify(comment, dbComment.getCommentator(), commentTator.getName(), question.getTitle(), NotificationEnum.REPLY_COMMENT, question.getId());
         }else if(comment.getType().equals(CommentTypeEnum.QUESTION.getType())){//问：此处==与equals的区别
             //回复问题
             Question question=questionMapper.selectByPrimaryKey(comment.getParentId());
@@ -69,9 +80,26 @@ public class CommentService {
             commentMapper.insert(comment);
             question.setCommentCount(1);
             questionExtMapper.incCommentCount(question);
+            //增加通知
+            createNotify(comment,question.getCreator(),commentTator.getName(),question.getTitle(),NotificationEnum.REPLY_QUESTION, question.getId());
+
         }else {
             throw new CustomizeException(CustomizeErrorCode.COMMENT_TYPE_NOT_EXIST);
         }
+    }
+
+    private void createNotify(Comment comment, Long receiver, String notifierName, String outerTitle, NotificationEnum notificationType, Long outerId) {
+        Notification notification = new Notification();
+        notification.setGmtCreate(System.currentTimeMillis());
+        notification.setType(notificationType.getType());
+        notification.setOuterId(outerId);
+        notification.setNotifier(comment.getCommentator());
+        notification.setStatus(NotificationStatusEnum.UNREAD.getStatus());
+        notification.setNotifierName(notifierName);
+        notification.setOuterTitle(outerTitle);
+        notification.setReceiver(receiver);
+
+        notificationMapper.insert(notification);
     }
 
     public List<CommentDTO> listByTargetId(Long id, CommentTypeEnum type) {

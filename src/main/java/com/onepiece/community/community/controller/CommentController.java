@@ -51,7 +51,7 @@ public class CommentController {
         comment.setLikeCount(0L);
         comment.setCommentCount(0);
 
-        commentService.insert(comment);//插入到数据库
+        commentService.insert(comment,user);//插入到数据库
         return ResultDTO.okOf();
 
     }

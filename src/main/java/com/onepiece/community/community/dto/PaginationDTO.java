@@ -5,7 +5,7 @@ import lombok.Data;
 import java.util.ArrayList;
 import java.util.List;
 @Data
-public class PaginationDTO {
+public class PaginationDTO<T> {
     //此处的数据转换是页面分页有关的数据与数据库当中的数据转换
     //记录与翻页功能有关的当前页面信息
     private boolean showPrevious;//是否显示往上翻页符号
@@ -16,7 +16,7 @@ public class PaginationDTO {
     private List<Integer> pages=new ArrayList<>();//记录页数的数值
     private Integer totalPage;//记录能显示的总页数
 
-    private List<QuestionDTO> questions;//记录每一页中的question对象
+    private List<T> data;//记录每一页中的question对象
 
     public void setPagination(Integer totalPage, Integer page) {//该方法未设置questions
         this.totalPage=totalPage;

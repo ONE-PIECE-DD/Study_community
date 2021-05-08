@@ -1,6 +1,5 @@
 package com.onepiece.community.community.service;
 
-import com.fasterxml.jackson.databind.node.LongNode;
 import com.onepiece.community.community.dto.PaginationDTO;
 import com.onepiece.community.community.dto.QuestionDTO;
 import com.onepiece.community.community.exception.CustomizeErrorCode;
@@ -20,7 +19,6 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.StringJoiner;
 import java.util.stream.Collectors;
 
 //service:有了这个之后Spring会自动管理，在里面可以同时使用QuestionMapper、UserMapper-起到组装的作用。当一个请求需要组装User-question的时候便需要service（习惯将中间层这么叫）
@@ -70,7 +68,7 @@ public class QuestionService {
             questionDTO.setUser(user);
             questionDTOList.add(questionDTO);
         }
-        paginationDTO.setQuestions(questionDTOList);//请求页所需的所有信息加载完成
+        paginationDTO.setData(questionDTOList);//请求页所需的所有信息加载完成
         return paginationDTO;//返回一页的信息（ps：一个链表对象存储的是一页的，而非所有页的）
     }
 
@@ -114,7 +112,7 @@ public class QuestionService {
             questionDTO.setUser(user);
             questionDTOList.add(questionDTO);
         }
-        paginationDTO.setQuestions(questionDTOList);//请求页所需的所有信息加载完成
+        paginationDTO.setData(questionDTOList);//请求页所需的所有信息加载完成
         return paginationDTO;//返回一页的信息（ps：一个链表对象存储的是一页的，而非所有页的）
 
     }
