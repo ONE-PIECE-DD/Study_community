@@ -3,6 +3,7 @@ package com.onepiece.community.community.interceptor;
 import com.onepiece.community.community.mapper.UserMapper;
 import com.onepiece.community.community.model.User;
 import com.onepiece.community.community.model.UserExample;
+import com.onepiece.community.community.service.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -17,6 +18,8 @@ import java.util.List;
 public class SessionInterceptor implements HandlerInterceptor {
     @Autowired//该注解不工作，是因为该类不是Spring接管的bean，所以不会在上下文中依赖，所以给该类一个注解"@Service"使得该类被Spring接管
     private UserMapper userMapper;
+    @Autowired
+    private NotificationService notificationService;
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         Cookie[] cookies = request.getCookies();
@@ -30,6 +33,8 @@ public class SessionInterceptor implements HandlerInterceptor {
                     if (users.size() != 0) {//如果有，则把user放到session里面，前端去显示
                         //
                         request.getSession().setAttribute("user", users.get(0));
+                        Long unreadCount = notificationService.unreadCount(users.get(0).getId());
+                        request.getSession().setAttribute("unreadMessage",unreadCount);
                     }
                     break;
                 }

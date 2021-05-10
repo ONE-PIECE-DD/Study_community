@@ -22,11 +22,10 @@
                 </form>
                 <ul class="nav navbar-nav navbar-right">
                     <li th:if="${session.user!=null}">
-
                         <a href="/publish">发布</a>
                     </li>
                     <li>
-                        <a href="/profile/replies">通知<span class="badge">42</span></a>
+                        <a href="/profile/replies">通知<span th:if="${session.unreadMessage!=0}" class="badge" th:text="${session.unreadMessage}"></span></a>
                     </li>
 
                     <!--取出先前放在session中的githubUser信息-->
