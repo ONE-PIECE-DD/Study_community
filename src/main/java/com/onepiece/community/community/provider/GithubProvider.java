@@ -3,10 +3,13 @@ package com.onepiece.community.community.provider;
 import com.alibaba.fastjson.JSON;
 import com.onepiece.community.community.dto.AccessTokenDTO;
 import com.onepiece.community.community.dto.GitHubUser;
+import com.onepiece.community.community.exception.CustomizeErrorCode;
+import com.onepiece.community.community.exception.CustomizeException;
 import okhttp3.*;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 
 @Component //仅仅的把这个类初始化到spring容器的上下文，将对象自动的实例化到了一个池子里面，当我们去用的时候可以很轻松的通过名字拿出来用
 public class GithubProvider{
@@ -25,7 +28,9 @@ public class GithubProvider{
             String string = response.body().string();
             String token = string.split("&")[0].split("=")[1];
             return token;
-        } catch (Exception e) {//这种io异常并不常见
+        } catch (SocketTimeoutException e) {//这种io异常并不常见
+            throw new CustomizeException(CustomizeErrorCode.AUTHORIZE_TIMED_OUT);
+        } catch (Exception e){
             e.printStackTrace();
         }
         return null;
